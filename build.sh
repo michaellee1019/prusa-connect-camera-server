@@ -1,12 +1,12 @@
 #!/bin/bash
 UNAME=$(uname -s)
 
-if [[ "$UNAME" == "Linux" ]]
+if [ "$UNAME" = "Linux" ]
 then
     echo "Installing venv on Linux"
     sudo apt-get install -y python3.11-venv
 fi
-if [[ "$UNAME" == "Darwin" ]]
+if [ "$UNAME" = "Darwin" ]
 then
     echo "Installing venv on Darwin"
     brew install python3.11-venv
