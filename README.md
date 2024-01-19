@@ -1,5 +1,5 @@
 # viam-modular-resources
-This repository contains a monolith of [Viam Robotics Modular Resources](https://docs.viam.com/extend/modular-resources/) that I have needed support for in my hobby projects.
+This module provides images for a PrusaConnect enabled printer. Out of the box, Prusa does not support USB camera support that are viewable online. This module can be added to a Raspberry Pi that has multiple cameras attached to it. Each camera is registered on connect.prusa.com. Viam will then capture images and upload them to Prusa, providing images that automatically refresh every 10 seconds.
 
 ## Models included
 

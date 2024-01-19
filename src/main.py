@@ -1,6 +1,8 @@
 import asyncio
 import sys
+from viam import logging
 
+LOGGER = logging.getLogger(__name__)
 sys.path.append("..")
 
 from viam.module.module import Module
@@ -12,6 +14,7 @@ from models import PrusaConnectCameraSnapshot
 Registry.register_resource_creator(Generic.SUBTYPE, PrusaConnectCameraSnapshot.MODEL, ResourceCreatorRegistration(PrusaConnectCameraSnapshot.new, PrusaConnectCameraSnapshot.validate_config))
 
 async def main():
+    LOGGER.info("Starting camera_snapshot module...")
     module = Module.from_args()
 
     module.add_model_from_registry(Generic.SUBTYPE, PrusaConnectCameraSnapshot.MODEL)

@@ -1,6 +1,4 @@
 import json
-import sys
-import io
 import requests
 import asyncio
 
@@ -17,10 +15,13 @@ from google.protobuf import json_format
 from viam import logging
 from viam.components.camera import Camera
 
+from threading import Thread
+from threading import Event
+
 LOGGER = logging.getLogger(__name__)
 
 class PrusaConnectCameraSnapshot(Generic):
-    MODEL: ClassVar[Model] = Model.from_string("michaellee1019:prusa-connect:camera-snapshot")
+    MODEL: ClassVar[Model] = Model.from_string("michaellee1019:prusa-connect:camera-server")
 
     cameras_config = {}
     cameras = list()
@@ -41,6 +42,7 @@ class PrusaConnectCameraSnapshot(Generic):
 
     @classmethod
     def new(cls, config: ComponentConfig, dependencies: Mapping[ResourceName, ResourceBase]) -> Self:
+        LOGGER.info("Starting camera_snapshot...")
         snapshotter = cls(config.name)
         snapshotter.reconfigure(config, dependencies)
         snapshotter.start_thread()

@@ -8,7 +8,7 @@ ssh-keygen:
 	ssh-copy-id -i ~/.ssh/id_ecdsa.pub $(target)
 
 robot-install:
-	ssh $(target) "sudo curl -H 'Secret: $(secret)' 'https://app.viam.com/api/json1/config?id=$(part)&client=t' -o /etc/viam.json; curl https://storage.googleapis.com/packages.viam.com/apps/viam-server/viam-server-stable-aarch64.AppImage -o viam-server && chmod 755 viam-server && sudo ./viam-server --aix-install && sudo raspi-config nonint do_i2c 0 && sudo reboot"
+	ssh $(target) "sudo apt-get install -y python3-pip python3.11-venv && sudo raspi-config nonint do_i2c 0 && sudo reboot"
 
 robot-clean:
 	echo "cleaning $(target)"
@@ -22,12 +22,12 @@ robot-copy: robot-clean
 
 robot-development-test:
 	echo "running module on $(target)"
-	ssh $(target) "sudo pip install -r requirements.txt"
-	ssh $(target) "python3 src/main.py"
+	ssh $(target) "python3 -m venv .venv && source .venv/bin/activate && pip3 install -r requirements.txt"
+	ssh $(target) "source .venv/bin/activate && python3 src/main.py"
 
 robot-build:
 	echo "building binary on $(target)"
-	ssh $(target) "python3 -m PyInstaller --onefile --hidden-import="googleapiclient" ~/src/main.py"
+	ssh $(target) "source .venv/bin/activate && python3 -m PyInstaller --onefile --hidden-import="googleapiclient" ~/src/main.py"
 
 robot-deploy:
 	echo "deploying local module on $(target)"
@@ -42,8 +42,12 @@ generate-tar:
 	scp $(target):~/dist/main dist/main
 	tar -czvf dist/archive.tar.gz dist/main
 
-developlement-workflow: robot-copy robot-development-test
+development-workflow: robot-copy robot-development-test
 
 test-workflow: robot-copy robot-restart
 
 package-workflow: robot-copy robot-build robot-deploy generate-tar robot-restart
+
+package-mac-workflow:
+	python3 -m venv .venv && source .venv/bin/activate && pip3 install -r requirements.txt && python3 -m PyInstaller -v && python3 -m PyInstaller --onefile --hidden-import="googleapiclient" src/main.py
+	tar -czvf dist/archive.tar.gz dist/main
