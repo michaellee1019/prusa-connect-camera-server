@@ -20,8 +20,8 @@ from threading import Event
 
 LOGGER = logging.getLogger(__name__)
 
-class PrusaConnectCameraSnapshot(Generic):
-    MODEL: ClassVar[Model] = Model.from_string("michaellee1019:prusa_connect:camera_snapshot")
+class PrusaConnectCameraServer(Generic):
+    MODEL: ClassVar[Model] = Model.from_string("michaellee1019:prusa_connect:camera_server")
 
     cameras_config = {}
     cameras = list()

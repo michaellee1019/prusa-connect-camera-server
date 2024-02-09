@@ -9,15 +9,15 @@ from viam.module.module import Module
 from viam.resource.registry import Registry, ResourceCreatorRegistration
 from viam.components.generic import Generic
 
-from models import PrusaConnectCameraSnapshot
+from models import PrusaConnectCameraServer
 
-Registry.register_resource_creator(Generic.SUBTYPE, PrusaConnectCameraSnapshot.MODEL, ResourceCreatorRegistration(PrusaConnectCameraSnapshot.new, PrusaConnectCameraSnapshot.validate_config))
+Registry.register_resource_creator(Generic.SUBTYPE, PrusaConnectCameraServer.MODEL, ResourceCreatorRegistration(PrusaConnectCameraServer.new, PrusaConnectCameraServer.validate_config))
 
 async def main():
     LOGGER.info("Starting camera_snapshot module...")
     module = Module.from_args()
 
-    module.add_model_from_registry(Generic.SUBTYPE, PrusaConnectCameraSnapshot.MODEL)
+    module.add_model_from_registry(Generic.SUBTYPE, PrusaConnectCameraServer.MODEL)
     await module.start()
 
 if __name__ == "__main__":
