@@ -2,6 +2,7 @@ import json
 import requests
 import asyncio
 import time
+import io
 
 from typing import ClassVar, Mapping, Sequence
 
