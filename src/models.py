@@ -21,12 +21,12 @@ from threading import Event
 LOGGER = logging.getLogger(__name__)
 
 class PrusaConnectCameraSnapshot(Generic):
-    MODEL: ClassVar[Model] = Model.from_string("michaellee1019:prusa-connect:camera-server")
+    MODEL: ClassVar[Model] = Model.from_string("michaellee1019:prusa_connect:camera_snapshot")
 
     cameras_config = {}
     cameras = list()
     thread = None
-    event = Event()
+    event = None
 
     def thread_run(self):
         loop = asyncio.get_event_loop()
@@ -34,28 +34,31 @@ class PrusaConnectCameraSnapshot(Generic):
 
     def start_thread(self):
         self.thread = Thread(target=self.thread_run())
+        self.event = Event()
         self.thread.start()
 
     def stop_thread(self):
-        self.event.set()
-        self.thread.join()
+        if self.thread is not None and self.event is not None:
+            self.event.set()
+            self.thread.join()
 
     @classmethod
     def new(cls, config: ComponentConfig, dependencies: Mapping[ResourceName, ResourceBase]) -> Self:
-        LOGGER.info("Starting camera_snapshot...")
         snapshotter = cls(config.name)
         snapshotter.reconfigure(config, dependencies)
-        snapshotter.start_thread()
         return snapshotter
     
     async def capture_images(self):
         while True:
             if self.event.is_set():
-                break
+                return
             for camera in self.cameras:
                 try:
                     image = await camera.get_image()
                     config = self.cameras_config.get(camera.name)
+
+                    image_bytes = io.BytesIO()
+                    image.save(image_bytes, format='JPEG')
 
                     resp = requests.put(
                         "https://connect.prusa3d.com/c/snapshot",
@@ -64,7 +67,7 @@ class PrusaConnectCameraSnapshot(Generic):
                             'Fingerprint': config['fingerprint'],
                             "Content-Type": "image/jpg"
                         },
-                        data=image.data
+                        data=image_bytes.getvalue()
                     )
                     if resp.status_code > 299:
                         LOGGER.error("failed to upload image to prusa. status code {}: {}".format(resp.status_code, resp.text))
@@ -77,6 +80,10 @@ class PrusaConnectCameraSnapshot(Generic):
 
     @classmethod
     def validate_config(cls, config: ComponentConfig) -> Sequence[str]:
+        LOGGER.info("validating config...")
+        # Custom validation can be done by specifiying a validate function like this one. Validate functions
+        # can raise errors that will be returned to the parent through gRPC. Validate functions can
+        # also return a sequence of strings representing the implicit dependencies of the resource.
         if "cameras_config" not in config.attributes.fields:
             raise Exception("A cameras_config attribute is required for camera_snapshot component.")
         
@@ -85,7 +92,7 @@ class PrusaConnectCameraSnapshot(Generic):
             if 'token' not in config or 'fingerprint' not in config:
                 raise Exception("camera '{}' is missing 'token' and/or 'fingerprint' fields".format(camera_name))
 
-        return [""]
+        return None
     
     def reconfigure(self,
                     config: ComponentConfig,
@@ -93,13 +100,13 @@ class PrusaConnectCameraSnapshot(Generic):
         LOGGER.info("Reconfiguring camera_snapshot...")
         self.stop_thread()
 
-        snapshotter.cameras_config = json.loads(json_format.MessageToJson(config.attributes.fields["cameras_config"]))
-        for camera_name in snapshotter.cameras_config.keys():
+        self.cameras_config = json.loads(json_format.MessageToJson(config.attributes.fields["cameras_config"]))
+        for camera_name in self.cameras_config.keys():
             camera = dependencies[Camera.get_resource_name(camera_name)]
             if camera is None:
                 LOGGER.error("camera '{}' is missing from dependencies. Be sure to add the camera to 'depends_on' field".format(camera))
             else:
-                snapshotter.cameras.append(camera)
+                self.cameras.append(camera)
 
         self.start_thread()
 
