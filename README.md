@@ -1,9 +1,9 @@
-# prusa-connect-camera-server
-This module provides images for a PrusaConnect enabled printer. Out of the box, Prusa does not support USB camera support that are viewable online. This module can be added to a Raspberry Pi that has multiple cameras attached to it. Each camera is registered on connect.prusa.com. Viam will then capture images and upload them to Prusa, providing images that automatically refresh every 10 seconds.
+# Prusa Connect Camera Server
+This Viam module provides images for a PrusaConnect enabled printer. Out of the box, Prusa does not support USB camera support that are viewable online. This module can be added to a Raspberry Pi that has multiple cameras attached to it. Each camera is registered on connect.prusa.com. Viam will then capture images and upload them to Prusa, providing images that automatically refresh every 10 seconds.
 
 ## Models included
 
-### michaellee1019:prusa-connect:camera-snapshot
+### michaellee1019:prusa_connect:camera_server
 This component provides a bridge a webcamera and PrusaConnect. Use this to easily setup one or more webcams connected to a Raspberry Pi, or other types of boards, and feed snapshots to PrusaConnect.
 
 First, add each camera as a [webcam](https://docs.viam.com/components/camera/webcam/) using Viam. You can also add a [Camera Serial Interface (CSI) camera](https://docs.viam.com/modular-resources/examples/csi/) that is integrated into the Raspberry Pi. I highly recommend using the builder to auto detect your connected cameras and generate the correct configuration.
@@ -53,8 +53,8 @@ Example Config
         "prusaxl1",
         "prusaxl2"
       ],
-      "model": "michaellee1019:prusa-connect:camera-snapshot",
-      "name": "prusa-connect",
+      "model": "michaellee1019:prusa_connect:camera_server",
+      "name": "Camera Server",
       "type": "generic"
     }
 ```
