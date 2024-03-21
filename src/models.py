@@ -72,9 +72,9 @@ class PrusaConnectCameraServer(Generic):
                         data=image_bytes.getvalue()
                     )
                     if resp.status_code > 299:
-                        LOGGER.error("failed to upload image to prusa. status code {}: {}".format(resp.status_code, resp.text))
+                        LOGGER.error("failed to upload image to prusa for camera '{}'. status code {}: {}".format(camera.name, resp.status_code, resp.text))
                 except Exception as e:
-                    LOGGER.error("failed to upload image to prusa: {}".format(e))
+                    LOGGER.error("failed to upload image to prusa for camera '{}': {}".format(camera.name,e))
                     continue
                 LOGGER.info("processed {} cameras.".format(len(self.cameras)))
 
