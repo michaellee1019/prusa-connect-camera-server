@@ -102,6 +102,7 @@ class PrusaConnectCameraServer(Generic):
         LOGGER.info("Reconfiguring camera_snapshot...")
         self.stop_thread()
 
+        self.cameras = list()
         self.cameras_config = json.loads(json_format.MessageToJson(config.attributes.fields["cameras_config"]))
         for camera_name in self.cameras_config.keys():
             camera = dependencies[Camera.get_resource_name(camera_name)]
