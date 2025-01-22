@@ -6,7 +6,9 @@
   "models": [
     {
       "api": "rdk:component:generic",
-      "model": "michaellee1019:prusa_connect:camera_server"
+      "model": "michaellee1019:prusa_connect:camera_server",
+      "markdown_link": "README.md#model-michaellee1019prusa_connectcamera_server",
+      "short_description": "Uploads images for a PrusaConnect enabled printer, providing images on the PrusaConnect website/app."
     }
   ],
   "build": {
