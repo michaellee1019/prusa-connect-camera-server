@@ -3,6 +3,7 @@
   "visibility": "public",
   "url": "https://github.com/michaellee1019/prusa-connect-camera-server",
   "description": "This module provides images for a PrusaConnect enabled printer. Out of the box, Prusa does not support USB camera support that are viewable online. This module can be added to a Raspberry Pi that has multiple cameras attached to it. Each camera is registered on connect.prusa.com. Viam will then capture images and upload them to Prusa, providing images that automatically refresh every 10 seconds.",
+    "markdown_link": "README.md",
   "models": [
     {
       "api": "rdk:component:generic",
