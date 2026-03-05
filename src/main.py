@@ -69,11 +69,10 @@ class PrusaConnectCameraServer(Generic, EasyResource):
             LOGGER.debug("uploading images to prusa...")
             for camera in self.cameras:
                 try:
-                    viam_image = await camera.get_image()
+                    images, metadata = await camera.get_images()
                     config = self.cameras_config.get(camera.name)
 
-                    # Convert ViamImage to PIL Image
-                    pil_image = viam_to_pil_image(viam_image)
+                    pil_image = viam_to_pil_image(images[0])
                     
                     image_bytes = io.BytesIO()
                     pil_image.save(image_bytes, format='JPEG')
